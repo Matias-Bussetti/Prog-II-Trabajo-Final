@@ -36,7 +36,7 @@
     * agenda_medicos:
         * Obtener la lista de todos los horarios habilitados para los médicos ordenados por médicos y por numero de día (`GET`). Ejemplo: primero todos los días que atiende el médico con ID=1 y esos dias ordenados del 1 al 5. (Ver ayudita al final de la consigna)
         * Agregar un día y horario de atención de un médico (`POST`).
-        * modificar los dias de atención de un médico (`PUT`).  (Por ejemplo, puede recibir los días que atenderá de la forma `{"lunes":1, "miercoles":1}` para indicar que atenderá lunes y miercoles - puede haber cualquier combinacion de días de la semana entre el lunes y el viernes)
+        * modificar los horarios de atención de un médico (`PUT`).  (Por ejemplo, puede recibir los días que modifica el horario de atención de la forma `[{"dia":1, "hora_inicio" : "10:00", "hora_fin":"17:00"},{"dia":3, "hora_inicio" : "8:00", "hora_fin":"12:00"}]` para indicar que se modifican los horarios de atención de lunes y miercoles - puede haber cualquier combinacion de días de la semana entre el lunes y el viernes, pero se debe verificar que se modifique el horario solamente si el médico trabaja ese día, es decir, no se agregan nuevos dias de atención en esta consulta)
         * eliminar los días de atención de un médico por su ID (`DELETE`). **No importa si hay turnos asignados en el día a eliminar, sino que se elimina de la agenda para que no puedan otorgarse nuevos turnos en ese día.**
     * turnos:
         * Obtener todos los turnos de un médico por su ID (`GET`).
