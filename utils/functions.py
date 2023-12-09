@@ -1,6 +1,12 @@
 import csv
 
 
+def crear_csv_con_encabezados(ruta, encabezados):
+    with open(ruta, "w", newline="", encoding="utf-8") as csvfile:
+        writer = csv.DictWriter(csvfile, fieldnames=encabezados)
+        writer.writeheader()
+
+
 def exportar_lista_a_csv(ruta, campos, lista):
     with open(ruta, "w", newline="", encoding="utf-8") as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=campos)

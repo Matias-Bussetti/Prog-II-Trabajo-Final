@@ -8,114 +8,83 @@ from utils.functions import (
     hacer_por_cada_fila_de_csv,
     exportar_lista_a_csv,
     obtener_elemento_de_lista_cuando_campo_es_igual,
+    crear_csv_con_encabezados,
 )
 
 ruta_archivo_turnos = r"modelo\db\turnos.csv"
-ruta_api_turnos = r"modelo\api\turnos_api.csv"
 
 turnos = []
+
+# TODO: Agregar id
 
 
 def exportar_a_csv():
     exportar_lista_a_csv(
         ruta_archivo_turnos,
         [
-            "id",
-            "dni",
-            "nombre",
-            "apellido",
-            "telefono",
-            "email",
-            "matricula",
-            "habilitado",
+            "id_medico",
+            "id_paciente",
+            "hora_turno",
+            "fecha_solicitud",
         ],
         turnos,
     )
 
 
 def importar_datos_desde_csv():
-    """
-    Importa los datos de sucursales desde un archivo CSV.
-    """
     global turnos
     turnos = []
 
     def por_cada_fila(fila):
+        # id_medico, dia_numero, hora_inicio, hora_fin, fecha_actualizacion
         turnos.append(
             {
-                "id": fila["id"],
-                "nombre": fila["nombre"],
-                "apellido": fila["apellido"],
-                "dni": fila["dni"],
-                "telefono": fila["telefono"],
-                "email": fila["email"],
-                "matricula": fila["matricula"],
-                "habilitado": bool(fila["habilitado"]),
+                "id_medico": fila["id_medico"],
+                "id_paciente": fila["id_paciente"],
+                "hora_turno": fila["hora_turno"],
+                "fecha_solicitud": fila["fecha_solicitud"],
             }
         )
 
     hacer_por_cada_fila_de_csv(ruta_archivo_turnos, por_cada_fila)
 
 
-def importar_datos_desde_api():
-    """
-    Importa los datos de sucursales desde un archivo CSV.
-    """
-    global turnos
-    global id_turnos
-    turnos = []
-
-    def por_cada_fila(fila):
-        turnos.append(
-            {
-                "id": fila["login.uuid"],
-                "nombre": fila["name.first"],
-                "apellido": fila["name.last"],
-                "dni": fila["id.value"][:-2],
-                "telefono": fila["phone"],
-                "email": fila["email"],
-                "matricula": fila["login.password"],
-                "habilitado": True,
-            }
-        )
-
-    hacer_por_cada_fila_de_csv(ruta_api_turnos, por_cada_fila)
-    exportar_a_csv()
-
-
 def inicializar_turnos():
-    global id_turnos
     if os.path.exists(ruta_archivo_turnos):
         importar_datos_desde_csv()
     else:
-        importar_datos_desde_api()
+        crear_csv_con_encabezados(
+            ruta_archivo_turnos,
+            [
+                "id_medico",
+                "id_paciente",
+                "hora_turno",
+                "fecha_solicitud",
+            ],
+        )
 
 
 # ---------------------------------------------
+
+
 def obtener_turnos():
     return turnos
 
 
 def crear_turno(
-    nombre_turno,
-    apellido_turno,
-    dni,
-    telefono,
-    email,
-    matricula,
+    id_medico,
+    id_paciente,
+    hora_turno,
+    fecha_solicitud,
 ):
     # TODO: Id's de participantes hacer funcinar???
     # Agrega la sucursal a la lista con un ID único
     turnos.append(
         {
-            "id": uuid.uuid1(),
-            "nombre": nombre_turno,
-            "apellido": apellido_turno,
-            "dni": dni,
-            "telefono": telefono,
-            "email": email,
-            "matricula": matricula,
-            "habilitado": True,
+            id_medico: id_medico,
+            id_paciente: id_paciente,
+            hora_turno: hora_turno,
+            fecha_solicitud: fecha_solicitud,
         }
     )
     exportar_a_csv()
