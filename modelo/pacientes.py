@@ -6,8 +6,8 @@ import uuid
 
 from utils.functions import hacer_por_cada_fila_de_csv, exportar_lista_a_csv
 
-ruta_archivo_pacientes = "modelo\pacientes.csv"
-ruta_api_pacientes = "modelo\pacientes_api.csv"
+ruta_archivo_pacientes = r"modelo\db\pacientes.csv"
+ruta_api_pacientes = r"modelo\api\pacientes_api.csv"
 
 pacientes = []
 id_pacientes = 1  # TODO: Comprobar si se usa
@@ -69,7 +69,7 @@ def importar_datos_desde_api():
                 "id": fila["login.uuid"],
                 "nombre": fila["name.first"],
                 "apellido": fila["name.last"],
-                "dni": fila["id.value"],
+                "dni": fila["id.value"][:-2],
                 "telefono": fila["phone"],
                 "email": fila["email"],
                 "direccion_calle": fila["location.street.name"],
@@ -78,6 +78,7 @@ def importar_datos_desde_api():
         )
 
     hacer_por_cada_fila_de_csv(ruta_api_pacientes, por_cada_fila)
+    exportar_a_csv()
 
 
 def inicializar_pacientes():

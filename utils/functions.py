@@ -21,6 +21,7 @@ def validar_campos_del_cuerpo(tienen_que_estar, cuerpo_peticion, campos):
     campos_en_json = [campo for campo in campos if campo in cuerpo_peticion]
 
     if tienen_que_estar and len(campos_en_json) != len(campos):
+        print("asd")
         return {
             "resultado": False,
             "mensaje": "El formato del cuerpo de la petición no contiene los campos necesarios: "
