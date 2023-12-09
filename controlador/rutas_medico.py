@@ -56,12 +56,19 @@ def crear_medicos_json():
 @medicos_bp.route("/medicos/<string:id>", methods=["GET"])
 def obtener_info_de_medico(id):
     # TODO comprobar id nulo o vacío
-    return jsonify(obtener_medico_por_id(id)), 200
+    medico = obtener_medico_por_id(id)
+    if not medico:
+        return jsonify({"error": "Médico no existe"}), 404
+
+    return jsonify(medico), 200
 
 
 @medicos_bp.route("/medicos/inhabilitar/<string:id>", methods=["PUT"])
 def inhabilitar_medico(id):
-    # TODO: No retonar mensaje correcto
+    medico = obtener_medico_por_id(id)
+    if not medico:
+        return jsonify({"error": "Médico no existe"}), 404
+
     return jsonify(inhabilitar_medico_por_id(id)), 200
 
 
@@ -69,6 +76,10 @@ def inhabilitar_medico(id):
 def actualizar_medico_json(id):
     if not request.is_json:
         return jsonify({"error": "El formato de la solicitud no es JSON"}), 400
+
+    medico = obtener_medico_por_id(id)
+    if not medico:
+        return jsonify({"error": "Médico no existe"}), 404
 
     campos = [
         "nombre",

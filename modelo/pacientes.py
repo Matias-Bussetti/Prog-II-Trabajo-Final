@@ -4,7 +4,11 @@ import os
 # Para los IDS
 import uuid
 
-from utils.functions import hacer_por_cada_fila_de_csv, exportar_lista_a_csv
+from utils.functions import (
+    hacer_por_cada_fila_de_csv,
+    exportar_lista_a_csv,
+    obtener_elemento_de_lista_cuando_campo_es_igual,
+)
 
 ruta_archivo_pacientes = r"modelo\db\pacientes.csv"
 ruta_api_pacientes = r"modelo\api\pacientes_api.csv"
@@ -122,7 +126,7 @@ def crear_paciente(
 
 
 def obtener_paciente_por_id(id):
-    return [paciente for paciente in pacientes if paciente["id"] == id][0]
+    return obtener_elemento_de_lista_cuando_campo_es_igual(pacientes, "id", id)
 
 
 def editar_paciente_por_id(id, campos, datos):

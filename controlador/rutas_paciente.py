@@ -56,14 +56,21 @@ def crear_pacientes_json():
 
 
 @pacientes_bp.route("/pacientes/<string:id>", methods=["GET"])
-def obtener_info_de_paciente(id):
-    # TODO comprobar id nulo o vacío
-    return jsonify(obtener_paciente_por_id(id)), 200
+def obtener_paciente(id):
+    paciente = obtener_paciente_por_id(id)
+    if not paciente:
+        return jsonify({"error": "Paciente no existe"}), 404
+
+    return jsonify(paciente), 200
 
 
 @pacientes_bp.route("/pacientes/<string:id>", methods=["DELETE"])
 def eliminar_paciente(id):
     # TODO: Compobar que exista
+    paciente = obtener_paciente_por_id(id)
+    if not paciente:
+        return jsonify({"error": "Paciente no existe"}), 404
+
     return jsonify(eliminar_paciente_por_id(id)), 200
 
 
@@ -71,6 +78,10 @@ def eliminar_paciente(id):
 def actualizar_paciente_json(id):
     if not request.is_json:
         return jsonify({"error": "El formato de la solicitud no es JSON"}), 400
+
+    paciente = obtener_paciente_por_id(id)
+    if not paciente:
+        return jsonify({"error": "Paciente no existe"}), 404
 
     campos = [
         "dni",

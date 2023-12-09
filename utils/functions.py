@@ -1,5 +1,4 @@
 import csv
-from flask import jsonify
 
 
 def exportar_lista_a_csv(ruta, campos, lista):
@@ -44,3 +43,13 @@ def validar_campos_del_cuerpo(tienen_que_estar, cuerpo_peticion, campos):
     #     }
 
     return {"resultado": True, "campos": campos_en_json}
+
+
+def obtener_elemento_de_lista_cuando_campo_es_igual(lista, campo, es_igual_a):
+    iterador = 0
+    while iterador < len(lista):
+        if lista[iterador][campo] == es_igual_a:
+            return lista[iterador]
+        iterador += 1
+
+    return False

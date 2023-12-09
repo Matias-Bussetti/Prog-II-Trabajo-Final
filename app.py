@@ -1,4 +1,5 @@
 from flask import Flask
+
 from modelo.pacientes import inicializar_pacientes
 from modelo.medicos import inicializar_medicos
 

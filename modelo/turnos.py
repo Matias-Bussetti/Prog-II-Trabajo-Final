@@ -10,16 +10,15 @@ from utils.functions import (
     obtener_elemento_de_lista_cuando_campo_es_igual,
 )
 
-ruta_archivo_medicos = r"modelo\db\medicos.csv"
-ruta_api_medicos = r"modelo\api\medicos_api.csv"
+ruta_archivo_turnos = r"modelo\db\turnos.csv"
+ruta_api_turnos = r"modelo\api\turnos_api.csv"
 
-medicos = []
-id_medicos = 1  # TODO: Comprobar si se usa
+turnos = []
 
 
 def exportar_a_csv():
     exportar_lista_a_csv(
-        ruta_archivo_medicos,
+        ruta_archivo_turnos,
         [
             "id",
             "dni",
@@ -30,7 +29,7 @@ def exportar_a_csv():
             "matricula",
             "habilitado",
         ],
-        medicos,
+        turnos,
     )
 
 
@@ -38,12 +37,11 @@ def importar_datos_desde_csv():
     """
     Importa los datos de sucursales desde un archivo CSV.
     """
-    global medicos
-    global id_medicos
-    medicos = []
+    global turnos
+    turnos = []
 
     def por_cada_fila(fila):
-        medicos.append(
+        turnos.append(
             {
                 "id": fila["id"],
                 "nombre": fila["nombre"],
@@ -56,19 +54,19 @@ def importar_datos_desde_csv():
             }
         )
 
-    hacer_por_cada_fila_de_csv(ruta_archivo_medicos, por_cada_fila)
+    hacer_por_cada_fila_de_csv(ruta_archivo_turnos, por_cada_fila)
 
 
 def importar_datos_desde_api():
     """
     Importa los datos de sucursales desde un archivo CSV.
     """
-    global medicos
-    global id_medicos
-    medicos = []
+    global turnos
+    global id_turnos
+    turnos = []
 
     def por_cada_fila(fila):
-        medicos.append(
+        turnos.append(
             {
                 "id": fila["login.uuid"],
                 "nombre": fila["name.first"],
@@ -81,26 +79,26 @@ def importar_datos_desde_api():
             }
         )
 
-    hacer_por_cada_fila_de_csv(ruta_api_medicos, por_cada_fila)
+    hacer_por_cada_fila_de_csv(ruta_api_turnos, por_cada_fila)
     exportar_a_csv()
 
 
-def inicializar_medicos():
-    global id_medicos
-    if os.path.exists(ruta_archivo_medicos):
+def inicializar_turnos():
+    global id_turnos
+    if os.path.exists(ruta_archivo_turnos):
         importar_datos_desde_csv()
     else:
         importar_datos_desde_api()
 
 
 # ---------------------------------------------
-def obtener_medicos():
-    return medicos
+def obtener_turnos():
+    return turnos
 
 
-def crear_medico(
-    nombre_medico,
-    apellido_medico,
+def crear_turno(
+    nombre_turno,
+    apellido_turno,
     dni,
     telefono,
     email,
@@ -108,11 +106,11 @@ def crear_medico(
 ):
     # TODO: Id's de participantes hacer funcinar???
     # Agrega la sucursal a la lista con un ID único
-    medicos.append(
+    turnos.append(
         {
             "id": uuid.uuid1(),
-            "nombre": nombre_medico,
-            "apellido": apellido_medico,
+            "nombre": nombre_turno,
+            "apellido": apellido_turno,
             "dni": dni,
             "telefono": telefono,
             "email": email,
@@ -121,31 +119,31 @@ def crear_medico(
         }
     )
     exportar_a_csv()
-    return medicos[-1]
+    return turnos[-1]
 
 
-def obtener_medico_por_id(id):
-    return obtener_elemento_de_lista_cuando_campo_es_igual(medicos, "id", id)
+def obtener_turno_por_id(id):
+    return obtener_elemento_de_lista_cuando_campo_es_igual(turnos, "id", id)
 
 
-def editar_medico_por_id(id, campos, datos):
-    medico_actualizado = None
+def editar_turno_por_id(id, campos, datos):
+    turno_actualizado = None
 
-    def actualizar(medico):
-        nonlocal medico_actualizado
-        if medico["id"] == id:
+    def actualizar(turno):
+        nonlocal turno_actualizado
+        if turno["id"] == id:
             for campo in campos:
-                medico[campo] = datos[campo]
-            medico_actualizado = medico
-        return medico
+                turno[campo] = datos[campo]
+            turno_actualizado = turno
+        return turno
 
-    global medicos
-    medicos = [actualizar(medico) for medico in medicos]
+    global turnos
+    turnos = [actualizar(turno) for turno in turnos]
     exportar_a_csv()
 
-    return medico_actualizado
+    return turno_actualizado
 
 
-def inhabilitar_medico_por_id(id):
+def inhabilitar_turno_por_id(id):
     # TODO: Compobar que exista
-    editar_medico_por_id(id, ["habilitado"], {"habilitado": False})
+    editar_turno_por_id(id, ["habilitado"], {"habilitado": False})
