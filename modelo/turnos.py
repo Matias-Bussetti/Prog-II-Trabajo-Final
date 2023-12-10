@@ -22,6 +22,7 @@ def exportar_a_csv():
     exportar_lista_a_csv(
         ruta_archivo_turnos,
         [
+            "id",
             "id_medico",
             "id_paciente",
             "hora_turno",
@@ -39,6 +40,7 @@ def importar_datos_desde_csv():
         # id_medico, dia_numero, hora_inicio, hora_fin, fecha_actualizacion
         turnos.append(
             {
+                "id": fila["id"],
                 "id_medico": fila["id_medico"],
                 "id_paciente": fila["id_paciente"],
                 "hora_turno": fila["hora_turno"],
@@ -56,6 +58,7 @@ def inicializar_turnos():
         crear_csv_con_encabezados(
             ruta_archivo_turnos,
             [
+                "id",
                 "id_medico",
                 "id_paciente",
                 "hora_turno",
@@ -67,8 +70,12 @@ def inicializar_turnos():
 # ---------------------------------------------
 
 
-def obtener_turnos():
-    return turnos
+def obtener_turnos_de_paciente_con_id_igual_a(id_paciente):
+    return [turno for turno in turnos if turno["id_paciente"] == id_paciente]
+
+
+def obtener_turnos_de_medico_con_id_igual_a(id_medico):
+    return [turno for turno in turnos if turno["id_medico"] == id_medico]
 
 
 def crear_turno(
@@ -77,14 +84,13 @@ def crear_turno(
     hora_turno,
     fecha_solicitud,
 ):
-    # TODO: Id's de participantes hacer funcinar???
-    # Agrega la sucursal a la lista con un ID único
     turnos.append(
         {
-            id_medico: id_medico,
-            id_paciente: id_paciente,
-            hora_turno: hora_turno,
-            fecha_solicitud: fecha_solicitud,
+            "id": uuid.uuid1(),
+            "id_medico": id_medico,
+            "id_paciente": id_paciente,
+            "hora_turno": hora_turno,
+            "fecha_solicitud": fecha_solicitud,
         }
     )
     exportar_a_csv()
@@ -95,24 +101,13 @@ def obtener_turno_por_id(id):
     return obtener_elemento_de_lista_cuando_campo_es_igual(turnos, "id", id)
 
 
-def editar_turno_por_id(id, campos, datos):
-    turno_actualizado = None
-
-    def actualizar(turno):
-        nonlocal turno_actualizado
-        if turno["id"] == id:
-            for campo in campos:
-                turno[campo] = datos[campo]
-            turno_actualizado = turno
-        return turno
-
-    global turnos
-    turnos = [actualizar(turno) for turno in turnos]
-    exportar_a_csv()
-
-    return turno_actualizado
-
-
-def inhabilitar_turno_por_id(id):
+def eliminar_turno_por_id(id):
     # TODO: Compobar que exista
-    editar_turno_por_id(id, ["habilitado"], {"habilitado": False})
+    global turnos
+    turno = [turno for turno in turnos if turno["id"] == id]
+    if len(turno) > 0:
+        turno = turno[0]
+        turnos = [turno for turno in turnos if turno["id"] != id]
+        exportar_a_csv()
+        return turno
+    return {"error": "turno no existe"}

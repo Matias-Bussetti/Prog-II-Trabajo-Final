@@ -1,11 +1,11 @@
 from flask import Blueprint, jsonify, request
 
 from modelo.turnos import (
-    obtener_turnos,
     crear_turno,
     obtener_turno_por_id,
-    editar_turno_por_id,
-    inhabilitar_turno_por_id,
+    obtener_turnos_de_medico_con_id_igual_a,
+    obtener_turnos_de_paciente_con_id_igual_a,
+    eliminar_turno_por_id,
 )
 from modelo.medicos import obtener_medico_por_id
 
@@ -81,67 +81,44 @@ def crear_turnos_json():
     ):
         return jsonify({"error": "el horario no esta disponible"}), 406
 
+    # TODO: Comprobar que el paciente existe
+    # TODO: Comprobar que no se pise con otros horarios
+    # TODO: Crear Turno
+
     return (
-        jsonify(cuerpo),
+        jsonify(
+            crear_turno(
+                cuerpo["id_medico"],
+                cuerpo["id_paciente"],
+                cuerpo["hora_turno"],
+                cuerpo["fecha_solicitud"],
+            )
+        ),
         201,
     )
 
 
-"""
-@turnos_bp.route("/turnos/", methods=["GET"])
-def obtener_turnos_json():
-    return jsonify(obtener_turnos())
-
-
-
-
-
-@turnos_bp.route("/turnos/<string:id>", methods=["GET"])
-def obtener_info_de_turno(id):
+@turnos_bp.route("/turnos/paciente/<string:id_paciente>", methods=["GET"])
+def obtener_turnos_de_paciente(id_paciente):
     # TODO comprobar id nulo o vacío
+    return jsonify(obtener_turnos_de_paciente_con_id_igual_a(id_paciente)), 200
+
+
+@turnos_bp.route("/turnos/medico/<string:id_medico>", methods=["GET"])
+def obtener_turnos_de_medico(id_medico):
+    # TODO comprobar id nulo o vacío
+    return jsonify(obtener_turnos_de_medico_con_id_igual_a(id_medico)), 200
+
+
+# ? -------------- HACIENDO
+@turnos_bp.route("/turnos/<string:id>", methods=["DELETE"])
+def eliminar_turno(id):
+    # TODO: Compobar que exista
     turno = obtener_turno_por_id(id)
     if not turno:
-        return jsonify({"error": "Médico no existe"}), 404
+        return jsonify({"error": "Turno no existe"}), 404
 
-    return jsonify(turno), 200
-
-
-@turnos_bp.route("/turnos/inhabilitar/<string:id>", methods=["PUT"])
-def inhabilitar_turno(id):
-    turno = obtener_turno_por_id(id)
-    if not turno:
-        return jsonify({"error": "Médico no existe"}), 404
-
-    return jsonify(inhabilitar_turno_por_id(id)), 200
+    return jsonify(eliminar_turno_por_id(id)), 200
 
 
-@turnos_bp.route("/turnos/<string:id>", methods=["PUT"])
-def actualizar_turno_json(id):
-    if not request.is_json:
-        return jsonify({"error": "El formato de la solicitud no es JSON"}), 400
-
-    turno = obtener_turno_por_id(id)
-    if not turno:
-        return jsonify({"error": "Médico no existe"}), 404
-
-    campos = [
-        "nombre",
-        "apellido",
-        "dni",
-        "telefono",
-        "email",
-        "matricula",
-    ]
-
-    validacion = validar_campos_del_cuerpo(False, request.json, campos)
-
-    if not validacion["resultado"]:
-        return jsonify({"error": validacion["mensaje"]}), 400
-
-    # TODO: Crear turnos
-    # TODO Comprobar Que se Cree Bien XD
-    return (
-        jsonify(editar_turno_por_id(id, validacion["campos"], request.json)),
-        200,
-    )
-"""
+# ? -------------- HACIENDO
