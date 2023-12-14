@@ -48,11 +48,11 @@ def importar_datos_desde_csv():
                 "id": fila["id"],
                 "nombre": fila["nombre"],
                 "apellido": fila["apellido"],
-                "dni": fila["dni"],
+                "dni": int(fila["dni"]),
                 "telefono": fila["telefono"],
                 "email": fila["email"],
                 "direccion_calle": fila["direccion_calle"],
-                "direccion_numero": fila["direccion_numero"],
+                "direccion_numero": int(fila["direccion_numero"]),
             }
         )
 
@@ -73,11 +73,11 @@ def importar_datos_desde_api():
                 "id": fila["login.uuid"],
                 "nombre": fila["name.first"],
                 "apellido": fila["name.last"],
-                "dni": fila["id.value"][:-2],
+                "dni": int(fila["id.value"][:-2]),
                 "telefono": fila["phone"],
                 "email": fila["email"],
                 "direccion_calle": fila["location.street.name"],
-                "direccion_numero": fila["location.street.number"],
+                "direccion_numero": int(fila["location.street.number"]),
             }
         )
 
@@ -108,6 +108,7 @@ def crear_paciente(
     direccion_numero,
 ):
     # TODO: Id's de participantes hacer funcinar???
+    global pacientes
     # Agrega la sucursal a la lista con un ID único
     pacientes.append(
         {
@@ -126,6 +127,7 @@ def crear_paciente(
 
 
 def obtener_paciente_por_id(id):
+    global pacientes
     return obtener_elemento_de_lista_cuando_campo_es_igual(pacientes, "id", id)
 
 

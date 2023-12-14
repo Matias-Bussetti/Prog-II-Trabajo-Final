@@ -106,8 +106,7 @@ def crear_medico(
     email,
     matricula,
 ):
-    # TODO: Id's de participantes hacer funcinar???
-    # Agrega la sucursal a la lista con un ID único
+    global medicos
     medicos.append(
         {
             "id": uuid.uuid1(),
@@ -125,10 +124,14 @@ def crear_medico(
 
 
 def obtener_medico_por_id(id):
+    global medicos
+
     return obtener_elemento_de_lista_cuando_campo_es_igual(medicos, "id", id)
 
 
 def editar_medico_por_id(id, campos, datos):
+    global medicos
+
     medico_actualizado = None
 
     def actualizar(medico):
