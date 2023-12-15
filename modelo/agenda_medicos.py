@@ -45,7 +45,7 @@ def obtener_agenda():
     return sorted(agenda_medicos, key=lambda x: (x['id_medico'], x['dia_numero']))
 
 
-def agregar_horario_agenda(id_medico, dia_numero, hora_inicio, hora_fin):
+def agregar_horario_agenda(id_medico, dia_numero, hora_inicio, hora_fin, fecha_actualizacion):
     global agenda_medicos
     fecha_actualizacion = datetime.now().strftime('%Y/%m/%d')
     agenda_medicos.append({
@@ -74,7 +74,7 @@ def verificar_disponibilidad(id_medico, dia_numero, hora_inicio, hora_fin):
             return False
     return True
 
-def modificar_horarios_agenda(id_medico, dia_numero, hora_inicio, hora_fin):
+def modificar_horarios_agenda(id_medico, dia_numero, hora_inicio, hora_fin, fecha_actualizacion):
     global agenda_medicos
     
     # Verificar que el médico trabaje ese día
