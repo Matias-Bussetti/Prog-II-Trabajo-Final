@@ -92,6 +92,58 @@ def fecha_y_horario_son_validos_para_una_lista_de_horarios(
     return son_validos
 
 
+def fecha_y_hora_se_superpone_con_un_turno_dentro_de_una_lista_de_turnos(
+    lista_de_turnos,
+    fecha,
+    hora,
+):
+    def rango_horario_esta_fuera_de_un_rango_horario(
+        rango_horario_inicio,
+        rango_horario_fin,
+        rango_horario_fuera_inicio,
+        rango_horario_fin_fin,
+    ):
+        hora_inicio = texto_a_hora(rango_horario_inicio)
+        hora_fin = texto_a_hora(rango_horario_fin)
+
+        rango_inicio = texto_a_hora(rango_horario_fuera_inicio)
+        rango_fin = texto_a_hora(rango_horario_fin_fin)
+
+        rango_inicio_fin_es_valido = rango_inicio < rango_fin
+
+        rango_menor_a_hora_inicial = rango_fin < hora_inicio
+
+        rango_mayor_a_hora_final = hora_fin < rango_inicio
+
+        return rango_inicio_fin_es_valido and (
+            rango_menor_a_hora_inicial or rango_mayor_a_hora_final
+        )
+
+    if not len(lista_de_turnos) > 0:
+        return False
+
+    se_superpone = False
+    iterador = 0
+    while iterador < len(lista_de_turnos) and not se_superpone:
+        turno = lista_de_turnos[iterador]
+
+        if turno["fecha_solicitud"] == fecha:
+            if not rango_horario_esta_fuera_de_un_rango_horario(
+                (turno["hora_turno"]),
+                devolver_hora_mas_15_minutos_en_string(turno["hora_turno"]),
+                (hora),
+                devolver_hora_mas_15_minutos_en_string(hora),
+            ):
+                se_superpone = True
+        iterador += 1
+
+    return se_superpone
+
+
 # https://bobbyhadz.com/blog/python-add-minutes-to-datetime
 def devolver_hora_mas_15_minutos_en_string(fecha):
     return (texto_a_hora(fecha) + timedelta(minutes=15)).strftime(formato_de_hora)
+
+
+# TODO Hacer una función que compruebe que los minutos de
+# TODO una hora sean 00 15 30 45

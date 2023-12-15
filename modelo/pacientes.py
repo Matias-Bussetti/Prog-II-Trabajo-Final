@@ -1,20 +1,20 @@
-import csv
+import random
 import os
 
 # Para los IDS
 import uuid
 
 from utils.functions import (
-    hacer_por_cada_fila_de_csv,
+    ejecutar_funcion_por_cada_elemento_obtenido_de_una_api,
     exportar_lista_a_csv,
+    hacer_por_cada_fila_de_csv,
     obtener_elemento_de_lista_cuando_campo_es_igual,
 )
 
 ruta_archivo_pacientes = r"modelo\db\pacientes.csv"
-ruta_api_pacientes = r"modelo\api\pacientes_api.csv"
+url_pacientes = "https://randomuser.me/api/?password=number,8&noinfo=&inc=login,name,id,phone,email,location&results=200"
 
 pacientes = []
-id_pacientes = 1  # TODO: Comprobar si se usa
 
 
 def exportar_a_csv():
@@ -35,11 +35,7 @@ def exportar_a_csv():
 
 
 def importar_datos_desde_csv():
-    """
-    Importa los datos de sucursales desde un archivo CSV.
-    """
     global pacientes
-    global id_pacientes
     pacientes = []
 
     def por_cada_fila(fila):
@@ -48,11 +44,11 @@ def importar_datos_desde_csv():
                 "id": fila["id"],
                 "nombre": fila["nombre"],
                 "apellido": fila["apellido"],
-                "dni": fila["dni"],
+                "dni": int(fila["dni"]),
                 "telefono": fila["telefono"],
                 "email": fila["email"],
                 "direccion_calle": fila["direccion_calle"],
-                "direccion_numero": fila["direccion_numero"],
+                "direccion_numero": int(fila["direccion_numero"]),
             }
         )
 
@@ -60,33 +56,42 @@ def importar_datos_desde_csv():
 
 
 def importar_datos_desde_api():
-    """
-    Importa los datos de sucursales desde un archivo CSV.
-    """
     global pacientes
-    global id_pacientes
     pacientes = []
 
     def por_cada_fila(fila):
+        dni = ""
+        if fila["id"]["value"]:
+            dni = int(
+                "".join(
+                    [
+                        numeros
+                        for numeros in (fila["id"]["value"])
+                        if numeros in ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
+                    ]
+                )
+            )
+        else:
+            dni = random.randint(20000000, 80000000)
+
         pacientes.append(
             {
-                "id": fila["login.uuid"],
-                "nombre": fila["name.first"],
-                "apellido": fila["name.last"],
-                "dni": fila["id.value"][:-2],
+                "id": fila["login"]["uuid"],
+                "nombre": fila["name"]["first"],
+                "apellido": fila["name"]["last"],
                 "telefono": fila["phone"],
+                "dni": dni,
                 "email": fila["email"],
-                "direccion_calle": fila["location.street.name"],
-                "direccion_numero": fila["location.street.number"],
+                "direccion_calle": fila["location"]["street"]["name"],
+                "direccion_numero": int(fila["location"]["street"]["number"]),
             }
         )
 
-    hacer_por_cada_fila_de_csv(ruta_api_pacientes, por_cada_fila)
+    ejecutar_funcion_por_cada_elemento_obtenido_de_una_api(url_pacientes, por_cada_fila)
     exportar_a_csv()
 
 
 def inicializar_pacientes():
-    global id_pacientes
     if os.path.exists(ruta_archivo_pacientes):
         importar_datos_desde_csv()
     else:
@@ -108,6 +113,7 @@ def crear_paciente(
     direccion_numero,
 ):
     # TODO: Id's de participantes hacer funcinar???
+    global pacientes
     # Agrega la sucursal a la lista con un ID único
     pacientes.append(
         {
@@ -126,6 +132,7 @@ def crear_paciente(
 
 
 def obtener_paciente_por_id(id):
+    global pacientes
     return obtener_elemento_de_lista_cuando_campo_es_igual(pacientes, "id", id)
 
 
