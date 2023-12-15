@@ -1,4 +1,5 @@
 import csv
+from datetime import datetime
 
 
 def crear_csv_con_encabezados(ruta, encabezados):
@@ -74,10 +75,19 @@ def campos_de_un_cuerpo_corresponden_a_su_tipo_de_variable(
         tipo = campo[1]
         llave = campo[0]
         if llave in cuerpo_de_peticion:
+            # TODO: Agregar tipo hora, dia y numero de semana
             if tipo == "string":
                 return type(cuerpo_de_peticion[llave]) == str
             elif tipo == "int":
                 return type(cuerpo_de_peticion[llave]) == int
+            elif tipo == "hora":
+                return type(cuerpo_de_peticion[llave]) == str and tiene_formato_de_hora(
+                    cuerpo_de_peticion[llave]
+                )
+            elif tipo == "dia":
+                return type(cuerpo_de_peticion[llave]) == str and tiene_formato_de_dia(
+                    cuerpo_de_peticion[llave]
+                )
             elif tipo == "email":
                 return (
                     type(cuerpo_de_peticion[llave]) == str
@@ -108,3 +118,35 @@ def campos_de_un_cuerpo_corresponden_a_su_tipo_de_variable(
         }
 
     return {"resultado": True}
+
+
+def tiene_formato_de_dia(cadena):
+    try:
+        cadena_a_fecha = datetime.strptime(cadena, "%d/%m/%Y")
+        return True
+    except:
+        return False
+
+
+def tiene_formato_de_hora(cadena):
+    try:
+        if len(cadena) > 5:
+            return False
+
+        cadena_dividida = cadena.split(":")
+
+        if len(cadena_dividida) != 2:
+            return False
+
+        hora = int(cadena_dividida[0])
+        minutos = int(cadena_dividida[1])
+
+        if not (0 <= hora and hora <= 23):
+            return False
+
+        if not (0 <= minutos and minutos <= 59):
+            return False
+
+        return True
+    except:
+        return False
