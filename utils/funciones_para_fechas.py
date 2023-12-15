@@ -134,15 +134,6 @@ def fecha_y_hora_se_superpone_con_un_turno_dentro_de_una_lista_de_turnos(
                 (hora),
                 devolver_hora_mas_15_minutos_en_string(hora),
             ):
-                print(
-                    (turno["hora_turno"])
-                    + " "
-                    + devolver_hora_mas_15_minutos_en_string(turno["hora_turno"])
-                    + " "
-                    + (hora)
-                    + " "
-                    + devolver_hora_mas_15_minutos_en_string(hora)
-                )
                 se_superpone = True
         iterador += 1
 
@@ -152,3 +143,7 @@ def fecha_y_hora_se_superpone_con_un_turno_dentro_de_una_lista_de_turnos(
 # https://bobbyhadz.com/blog/python-add-minutes-to-datetime
 def devolver_hora_mas_15_minutos_en_string(fecha):
     return (texto_a_hora(fecha) + timedelta(minutes=15)).strftime(formato_de_hora)
+
+
+# TODO Hacer una función que compruebe que los minutos de
+# TODO una hora sean 00 15 30 45

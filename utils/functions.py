@@ -1,5 +1,7 @@
 import csv
 from datetime import datetime
+import requests
+import random
 
 
 def crear_csv_con_encabezados(ruta, encabezados):
@@ -17,7 +19,7 @@ def exportar_lista_a_csv(ruta, campos, lista):
 
 
 def hacer_por_cada_fila_de_csv(ruta, funcion):
-    with open(ruta, newline="") as csvfile:
+    with open(ruta, encoding="utf-8", newline="") as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
             funcion(row)
@@ -103,7 +105,6 @@ def campos_de_un_cuerpo_corresponden_a_su_tipo_de_variable(
     ]
 
     def armar_mensaje_con_campos_que_falloron_la_validacion():
-        print(campos_que_fallaron_la_validacion)
         return "Los siguiente campos no son del tipo correspondiente: " + ", ".join(
             [
                 campo[0] + " no corresponde a => " + campo[1]
@@ -150,3 +151,14 @@ def tiene_formato_de_hora(cadena):
         return True
     except:
         return False
+
+
+def ejecutar_funcion_por_cada_elemento_obtenido_de_una_api(
+    url, funcion_por_cada_elemento
+):
+    consumo_de_api = requests.get(url)
+
+    if consumo_de_api.status_code == 200:
+        data_de_api = consumo_de_api.json()
+        for linea in data_de_api["results"]:
+            funcion_por_cada_elemento(linea)

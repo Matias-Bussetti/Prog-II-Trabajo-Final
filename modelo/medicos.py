@@ -1,4 +1,4 @@
-import csv
+import random
 import os
 
 # Para los IDS
@@ -8,13 +8,14 @@ from utils.functions import (
     hacer_por_cada_fila_de_csv,
     exportar_lista_a_csv,
     obtener_elemento_de_lista_cuando_campo_es_igual,
+    ejecutar_funcion_por_cada_elemento_obtenido_de_una_api,
 )
 
 ruta_archivo_medicos = r"modelo\db\medicos.csv"
-ruta_api_medicos = r"modelo\api\medicos_api.csv"
+url_medicos = "https://randomuser.me/api/?password=number,8&noinfo=&inc=login,name,id,phone,email,location&results=200"
+
 
 medicos = []
-id_medicos = 1  # TODO: Comprobar si se usa
 
 
 def exportar_a_csv():
@@ -35,11 +36,7 @@ def exportar_a_csv():
 
 
 def importar_datos_desde_csv():
-    """
-    Importa los datos de sucursales desde un archivo CSV.
-    """
     global medicos
-    global id_medicos
     medicos = []
 
     def por_cada_fila(fila):
@@ -60,33 +57,42 @@ def importar_datos_desde_csv():
 
 
 def importar_datos_desde_api():
-    """
-    Importa los datos de sucursales desde un archivo CSV.
-    """
     global medicos
-    global id_medicos
     medicos = []
 
     def por_cada_fila(fila):
+        dni = ""
+        if fila["id"]["value"]:
+            dni = int(
+                "".join(
+                    [
+                        numeros
+                        for numeros in (fila["id"]["value"])
+                        if numeros in ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
+                    ]
+                )
+            )
+        else:
+            dni = random.randint(20000000, 80000000)
+
         medicos.append(
             {
-                "id": fila["login.uuid"],
-                "nombre": fila["name.first"],
-                "apellido": fila["name.last"],
-                "dni": fila["id.value"][:-2],
+                "id": fila["login"]["uuid"],
+                "nombre": fila["name"]["first"],
+                "apellido": fila["name"]["last"],
                 "telefono": fila["phone"],
+                "dni": dni,
                 "email": fila["email"],
-                "matricula": fila["login.password"],
+                "matricula": fila["login"]["password"],
                 "habilitado": True,
             }
         )
 
-    hacer_por_cada_fila_de_csv(ruta_api_medicos, por_cada_fila)
+    ejecutar_funcion_por_cada_elemento_obtenido_de_una_api(url_medicos, por_cada_fila)
     exportar_a_csv()
 
 
 def inicializar_medicos():
-    global id_medicos
     if os.path.exists(ruta_archivo_medicos):
         importar_datos_desde_csv()
     else:
