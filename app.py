@@ -1,3 +1,7 @@
+# ? Desarrollado por el Equipo de:
+# ? Diego Bruno y Matias Bussetti
+
+
 from flask import Flask
 
 from modelo.pacientes import inicializar_pacientes
