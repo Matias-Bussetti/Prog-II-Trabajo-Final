@@ -2,7 +2,6 @@ from flask import Blueprint, jsonify, request
 
 from modelo.agenda_medicos import (
     obtener_agenda,
-    obtener_agenda_por_id,
     agregar_horario_agenda,
     eliminar_horario_agenda,
     modificar_horarios_agenda,
@@ -82,56 +81,54 @@ def agregar_horario_agenda_json():
         return jsonify({"error": "Falla en el server"}), 500
 
 
-@agenda_medicos_bp.route("/agenda_medicos/modificar_horario/", methods=["PUT"])
-def modificar_horarios_agenda_json():
-    try:
-        if not request.is_json:
-            return jsonify({"error": "El formato de la solicitud no es JSON"}), 400
+@agenda_medicos_bp.route("/agenda_medicos/<string:id_medico>", methods=["PUT"])
+def modificar_horarios_agenda_json(id_medico):
+    # try:
+    medico = obtener_medico_por_id(id_medico)
+    if not medico:
+        return jsonify({"error": "Médico no existe"}), 404
 
-        campos = [
-            "id_medico",
-            "dia_numero",
-            "hora_inicio",
-            "hora_fin",
-            "fecha_actualizacion",
-        ]
+    cuerpo = request.json
 
-        validacion = validar_campos_del_cuerpo(True, request.json, campos)
+    if not request.is_json:
+        return jsonify({"error": "El formato de la solicitud no es JSON"}), 400
+
+    campos = [
+        "dia",
+        "hora_inicio",
+        "hora_fin",
+    ]
+    #! Validando cada agenda
+    for agenda_en_cuerpo in cuerpo:
+        validacion = validar_campos_del_cuerpo(True, agenda_en_cuerpo, campos)
 
         if not validacion["resultado"]:
             return jsonify({"error": validacion["mensaje"]}), 400
 
         arreglo_de_tuplas_campo_y_tipo = [
-            ("id_medico", "int"),
-            ("dia_numero", "int"),
-            ("hora_inicio", "string"),
-            ("hora_fin", "string"),
-            ("fecha_actualizacion", "string"),
+            ("dia", "numero_de_dia_de_semana"),
+            ("hora_inicio", "hora"),
+            ("hora_fin", "hora"),
         ]
 
         validacion_de_tipo_de_datos = (
             campos_de_un_cuerpo_corresponden_a_su_tipo_de_variable(
-                request.json, arreglo_de_tuplas_campo_y_tipo
+                agenda_en_cuerpo, arreglo_de_tuplas_campo_y_tipo
             )
         )
 
         if not validacion_de_tipo_de_datos["resultado"]:
             return jsonify({"error": validacion_de_tipo_de_datos["mensaje"]}), 400
+    #! Validando cada agenda
 
-        return (
-            jsonify(
-                modificar_horarios_agenda(
-                    validacion["id_medico"],
-                    validacion["dia_numero"],
-                    validacion["hora_inicio"],
-                    validacion["hora_fin"],
-                    validacion["fecha_actualizacion"],
-                )
-            ),
-            200,
-        )
-    except:
-        return jsonify({"error": "Falla en el server"}), 500
+    return (
+        jsonify(modificar_horarios_agenda(id_medico, cuerpo)),
+        200,
+    )
+
+
+# except:
+#     return jsonify({"error": "Falla en el server"}), 500
 
 
 @agenda_medicos_bp.route("/agenda_medicos/<string:id_medico>", methods=["DELETE"])

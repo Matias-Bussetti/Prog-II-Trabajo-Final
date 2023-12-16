@@ -94,6 +94,12 @@ def campos_de_un_cuerpo_corresponden_a_su_tipo_de_variable(
                 return type(cuerpo_de_peticion[llave]) == str and tiene_formato_de_hora(
                     cuerpo_de_peticion[llave]
                 )
+            elif tipo == "hora_de_turno":
+                return (
+                    type(cuerpo_de_peticion[llave]) == str
+                    and tiene_formato_de_hora(cuerpo_de_peticion[llave])
+                    and cuerpo_de_peticion[llave][3:5] in ["00", "15", "30", "45"]
+                )
             elif tipo == "dia":
                 return type(cuerpo_de_peticion[llave]) == str and tiene_formato_de_dia(
                     cuerpo_de_peticion[llave]

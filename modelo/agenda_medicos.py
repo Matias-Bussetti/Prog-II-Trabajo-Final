@@ -46,13 +46,8 @@ def obtener_agenda():
     return sorted(agenda_medicos, key=lambda x: (x["id_medico"], x["dia_numero"]))
 
 
-def obtener_agenda_por_id(id):
-    if obtener_elemento_de_lista_cuando_campo_es_igual(agenda_medicos, "id", id):
-        print("si")
-    else:
-        print("no")
-
-    return obtener_elemento_de_lista_cuando_campo_es_igual(agenda_medicos, "id", id)
+def obtener_agenda_medico_por_id(id_medico):
+    return [agenda for agenda in agenda_medicos if agenda["id_medico"] == id_medico]
 
 
 def agregar_horario_agenda(
@@ -95,35 +90,25 @@ def verificar_disponibilidad(id_medico, dia_numero, hora_inicio, hora_fin):
     return True
 
 
-def modificar_horarios_agenda(
-    id_medico, dia_numero, hora_inicio, hora_fin, fecha_actualizacion
-):
+def modificar_horarios_agenda(id_medico, lista_de_horarios):
     global agenda_medicos
 
-    # Verificar que el médico trabaje ese día
-    if any(
-        agenda["id_medico"] == id_medico and agenda["dia_numero"] == dia_numero
-        for agenda in agenda_medicos
-    ):
-        # Verificar disponibilidad de horarios
-        if verificar_disponibilidad(id_medico, dia_numero, hora_inicio, hora_fin):
-            for agenda in agenda_medicos:
-                if (
-                    agenda["id_medico"] == id_medico
-                    and agenda["dia_numero"] == dia_numero
-                ):
-                    agenda["hora_inicio"] = hora_inicio
-                    agenda["hora_fin"] = hora_fin
-                    agenda["fecha_actualizacion"] = datetime.now().strftime("%Y/%m/%d")
-        else:
-            print(
-                f"El médico ya tiene un turno registrado para el día {dia_numero} y horario {hora_inicio} - {hora_fin}."
-            )
-    else:
-        print(f"El médico no trabaja el día {dia_numero}.")
+    for horarios in lista_de_horarios:
 
-    exportar_a_csv()
-    return obtener_agenda()
+        def actualizar(agenda):
+            actualizadaAgenda = agenda
+            if (
+                actualizadaAgenda["id_medico"] == id_medico
+                and actualizadaAgenda["dia_numero"] == horarios["dia"]
+            ):
+                actualizadaAgenda["hora_inicio"] = horarios["hora_inicio"]
+                actualizadaAgenda["hora_fin"] = horarios["hora_fin"]
+            return actualizadaAgenda
+
+        exportar_a_csv()
+        agenda_medicos = [actualizar(agenda) for agenda in agenda_medicos]
+
+    return obtener_agenda_medico_por_id(id_medico)
 
 
 def eliminar_horario_agenda(id_medico):

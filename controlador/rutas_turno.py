@@ -9,7 +9,7 @@ from modelo.turnos import (
 )
 from modelo.medicos import obtener_medico_por_id
 from modelo.pacientes import obtener_paciente_por_id
-
+from modelo.agenda_medicos import obtener_agenda_medico_por_id
 
 from utils.functions import (
     validar_campos_del_cuerpo,
@@ -25,30 +25,30 @@ turnos_bp = Blueprint("turnos", __name__)
 
 
 # * TEST * --------------------------
-def obtener_agenda_medico_por_id(id):
-    return [
-        {
-            "dia_numero": "1",
-            "hora_inicio": "8:00",
-            "hora_fin": "10:00",
-            "id_medico": "707ec1f9-e503-4858-b4d3-eb187eefebcb",
-            "fecha_actualizacion": "2023/11/5",
-        },
-        {
-            "dia_numero": "3",
-            "hora_inicio": "18:00",
-            "hora_fin": "21:00",
-            "id_medico": "707ec1f9-e503-4858-b4d3-eb187eefebcb",
-            "fecha_actualizacion": "2023/11/5",
-        },
-        {
-            "dia_numero": "6",
-            "hora_inicio": "4:00",
-            "hora_fin": "16:00",
-            "id_medico": "707ec1f9-e503-4858-b4d3-eb187eefebcb",
-            "fecha_actualizacion": "2023/11/5",
-        },
-    ]
+# def obtener_agenda_medico_por_id(id):
+#     return [
+#         {
+#             "dia_numero": "1",
+#             "hora_inicio": "8:00",
+#             "hora_fin": "10:00",
+#             "id_medico": "707ec1f9-e503-4858-b4d3-eb187eefebcb",
+#             "fecha_actualizacion": "2023/11/5",
+#         },
+#         {
+#             "dia_numero": "3",
+#             "hora_inicio": "18:00",
+#             "hora_fin": "21:00",
+#             "id_medico": "707ec1f9-e503-4858-b4d3-eb187eefebcb",
+#             "fecha_actualizacion": "2023/11/5",
+#         },
+#         {
+#             "dia_numero": "6",
+#             "hora_inicio": "4:00",
+#             "hora_fin": "16:00",
+#             "id_medico": "707ec1f9-e503-4858-b4d3-eb187eefebcb",
+#             "fecha_actualizacion": "2023/11/5",
+#         },
+#     ]
 
 
 # * TEST * --------------------------
@@ -76,7 +76,7 @@ def crear_turnos_json():
     arreglo_de_tuplas_campo_y_tipo = [
         ("id_medico", "string"),
         ("id_paciente", "string"),
-        ("hora_turno", "hora"),
+        ("hora_turno", "hora_de_turno"),
         ("fecha_solicitud", "dia"),
     ]
 
