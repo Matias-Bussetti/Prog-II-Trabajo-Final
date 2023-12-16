@@ -82,6 +82,14 @@ def campos_de_un_cuerpo_corresponden_a_su_tipo_de_variable(
                 return type(cuerpo_de_peticion[llave]) == str
             elif tipo == "int":
                 return type(cuerpo_de_peticion[llave]) == int
+            elif tipo == "numero_de_dia_de_semana":
+                if type(cuerpo_de_peticion[llave]) == int:
+                    if (
+                        0 <= int(cuerpo_de_peticion[llave])
+                        and int(cuerpo_de_peticion[llave]) <= 6
+                    ):
+                        return True
+                return False
             elif tipo == "hora":
                 return type(cuerpo_de_peticion[llave]) == str and tiene_formato_de_hora(
                     cuerpo_de_peticion[llave]

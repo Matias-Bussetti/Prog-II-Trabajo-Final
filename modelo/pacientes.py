@@ -158,6 +158,8 @@ def eliminar_paciente_por_id(id):
     # TODO: Compobar que exista
     global pacientes
     paciente = [paciente for paciente in pacientes if paciente["id"] == id]
+    exportar_a_csv()
+
     if len(paciente) > 0:
         paciente = paciente[0]
         pacientes = [paciente for paciente in pacientes if paciente["id"] != id]
